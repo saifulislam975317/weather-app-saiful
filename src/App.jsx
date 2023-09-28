@@ -10,15 +10,20 @@ const api = {
 function App() {
   const [city, setCity] = useState("");
   const [weather, setWeather] = useState({});
+  const [message, setMessage] = useState("");
 
   const search = async (e) => {
     if (e.key === "Enter") {
-      const res = await axios.get(
-        `${api.base}weather?q=${city}&units=metric&APPID=${api.key}`
-      );
-      setCity("");
-      setWeather(res.data);
-      console.log("data", res.data);
+      try {
+        const res = await axios.get(
+          `${api.base}weather?q=${city}&units=metric&APPID=${api.key}`
+        );
+        setCity("");
+        setMessage("");
+        setWeather(res.data);
+      } catch (error) {
+        setMessage(error.message);
+      }
     }
   };
 
@@ -43,8 +48,13 @@ function App() {
             value={city}
             onKeyPress={search}
             placeholder="search your city..."
-            className="input search-bar input-bordered w-full max-w-sm"
+            className="input mb-2  input-bordered w-full max-w-sm"
           />
+          {message && (
+            <h className="text-green-600 text-lg">
+              Please type a valid city name
+            </h>
+          )}
         </div>
         {typeof weather.main !== "undefined" ? (
           <div>
